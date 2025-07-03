@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, Settings, Clipboard, Bot } from 'lucide-react';
 import { PageType } from '../types';
 
 interface SidebarProps {
@@ -9,8 +9,8 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => {
   const menuItems = [
-    { id: 'email-management' as PageType, label: 'Dashboard', icon: null },
-    { id: 'content-business' as PageType, label: 'Content and business', icon: null },
+    { id: 'email-management' as PageType, label: 'Dashboard', icon: Clipboard },
+    { id: 'content-business' as PageType, label: 'Content and business', icon: Bot },
     { id: 'settings' as PageType, label: 'Settings', icon: Settings },
   ];
 
@@ -43,19 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
                   : 'border border-gray-300 hover:bg-gray-50 text-gray-700'
               }`}
             >
-              {Icon ? (
-                <Icon className="w-5 h-5 mr-3 text-gray-400" />
-              ) : (
-                <div className={`w-6 h-6 rounded-full mr-3 flex items-center justify-center ${
-                  isActive 
-                    ? ''
-                    : 'border border-gray-300'
-                }`}>
-                  <div className={`w-2 h-2 rounded-full ${
-                    isActive ? 'bg-[#57A777]' : 'bg-gray-400'
-                  }`}></div>
-                </div>
-              )}
+              <Icon className="w-5 h-5 mr-3 text-gray-400" />
               {item.label}
             </button>
           );
