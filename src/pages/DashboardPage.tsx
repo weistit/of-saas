@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Settings } from 'lucide-react';
 import { TopBar } from '../components/TopBar';
+import { LogoutModal } from '../components/LogoutModal';
 
 interface DashboardPageProps {
   userName: string;
@@ -13,6 +14,29 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   onLogout,
   onNavigateToEmailManagement
 }) => {
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = async () => {
+    setIsLoggingOut(true);
+    try {
+      await onLogout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setIsLoggingOut(false);
+      setShowLogoutModal(false);
+    }
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <TopBar onLogout={onLogout} />
@@ -45,10 +69,20 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       </div>
 
       <div className="fixed bottom-8 right-8">
-        <button className="bg-gray-200 hover:bg-gray-300 p-3 rounded-full shadow-lg transition-colors duration-200">
+        <button 
+          onClick={handleLogoutClick}
+          className="bg-gray-200 hover:bg-gray-300 p-3 rounded-full shadow-lg transition-colors duration-200"
+        >
           <Settings className="w-6 h-6 text-gray-600" />
         </button>
       </div>
+
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+        isLoading={isLoggingOut}
+      />
     </div>
   );
 };
