@@ -79,14 +79,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             <Settings className="w-6 h-6 text-gray-600" />
           </button>
           
-          <div className="absolute bottom-full right-0 mb-2">
-            <SettingsDropdown
-              isOpen={showDropdown}
-              onClose={handleCloseDropdown}
-              onLogout={handleLogout}
-              isLoading={isLoggingOut}
-            />
-          </div>
+          <SettingsDropdown
+            isOpen={showDropdown}
+            onClose={handleCloseDropdown}
+            onLogout={handleLogout}
+            isLoading={isLoggingOut}
+            position="up"
+          />
         </div>
       </div>
     </div>

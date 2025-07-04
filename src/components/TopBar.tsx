@@ -61,6 +61,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onLogout, showUserActions = true
                 onClose={handleCloseDropdown}
                 onLogout={handleLogout}
                 isLoading={isLoggingOut}
+                position="down"
               />
             </div>
           </div>

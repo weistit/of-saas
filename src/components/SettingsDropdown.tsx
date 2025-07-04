@@ -6,13 +6,15 @@ interface SettingsDropdownProps {
   onClose: () => void;
   onLogout: () => void;
   isLoading?: boolean;
+  position?: 'up' | 'down';
 }
 
 export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   isOpen,
   onClose,
   onLogout,
-  isLoading = false
+  isLoading = false,
+  position = 'up'
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -34,10 +36,14 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
 
   if (!isOpen) return null;
 
+  const positionClasses = position === 'up' 
+    ? 'bottom-full right-0 mb-2 origin-bottom-right' 
+    : 'top-full right-0 mt-2 origin-top-right';
+
   return (
     <div 
       ref={dropdownRef}
-      className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 transform transition-all duration-200 origin-top-right"
+      className={`absolute ${positionClasses} w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 transform transition-all duration-200`}
     >
       {/* Profile Section */}
       <div className="px-4 py-3 border-b border-gray-100">
