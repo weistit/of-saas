@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Eye, EyeOff, Check } from 'lucide-react';
 import { TopBar } from '../components/TopBar';
 import { PasswordRequirement } from '../types';
+import { useAuth } from '../hooks/useAuth';
 
 interface AuthPageProps {
   isLogin: boolean;
@@ -26,6 +27,42 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   onSubmit,
   onSwitchMode
 }) => {
+  const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      await signInWithGoogle();
+    } catch (error) {
+      setError('Failed to sign in with Google. Please try again.');
+      console.error('Google sign in error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      if (isLogin) {
+        await signInWithEmail(email, password);
+      } else {
+        await signUpWithEmail(email, password);
+      }
+    } catch (error: any) {
+      setError(error.message || 'Authentication failed. Please try again.');
+      console.error('Email auth error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const passwordRequirements: PasswordRequirement[] = [
     { text: 'Uppercase letter', met: /[A-Z]/.test(password) },
     { text: 'Lowercase letter', met: /[a-z]/.test(password) },
@@ -47,11 +84,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               </h1>
             </div>
 
-            <form onSubmit={onSubmit} className="space-y-6">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleEmailSubmit} className="space-y-6">
               {/* Google Sign In */}
               <button
                 type="button"
-                className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-medium"
+                onClick={handleGoogleSignIn}
+                disabled={isLoading}
+                className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -59,7 +104,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                 </svg>
-                Continue with Google
+                {isLoading ? 'Signing in...' : 'Continue with Google'}
               </button>
 
               {/* Divider */}
@@ -85,6 +130,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   style={{ '--tw-ring-color': '#57A777' } as React.CSSProperties}
                   placeholder="mail@gmail.com"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -102,11 +148,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     style={{ '--tw-ring-color': '#57A777' } as React.CSSProperties}
                     placeholder="••••••••••"
                     required
+                    disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={onTogglePassword}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                    disabled={isLoading}
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -139,13 +187,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full text-white py-3 px-4 rounded-lg font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200"
+                disabled={isLoading}
+                className="w-full text-white py-3 px-4 rounded-lg font-semibold hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ 
                   backgroundColor: '#57A777',
                   '--tw-ring-color': '#57A777'
                 } as React.CSSProperties}
               >
-                {isLogin ? 'Log In' : 'Sign Up'}
+                {isLoading ? 'Processing...' : (isLogin ? 'Log In' : 'Sign Up')}
               </button>
 
               {/* Bottom Links */}
@@ -156,7 +205,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       <button
                         type="button"
                         onClick={onSwitchMode}
-                        className="text-sm hover:opacity-80 transition-colors duration-200"
+                        disabled={isLoading}
+                        className="text-sm hover:opacity-80 transition-colors duration-200 disabled:opacity-50"
                       >
                         <span className="text-gray-900">No account? </span>
                         <span className="font-bold underline" style={{ color: '#57A777' }}>Create one</span>
@@ -165,7 +215,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     <div>
                       <button
                         type="button"
-                        className="text-sm hover:opacity-80 transition-colors duration-200 underline"
+                        disabled={isLoading}
+                        className="text-sm hover:opacity-80 transition-colors duration-200 underline disabled:opacity-50"
                         style={{ color: '#57A777' }}
                       >
                         Reset password
@@ -176,7 +227,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <button
                     type="button"
                     onClick={onSwitchMode}
-                    className="text-sm hover:opacity-80 transition-colors duration-200"
+                    disabled={isLoading}
+                    className="text-sm hover:opacity-80 transition-colors duration-200 disabled:opacity-50"
                     style={{ color: '#57A777' }}
                   >
                     Have an account? <span className="underline">Sign In Now</span>

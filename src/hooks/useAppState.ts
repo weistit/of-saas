@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppState, PageType } from '../types';
+import { useAuth } from './useAuth';
 
 export const useAppState = () => {
+  const { user, loading } = useAuth();
   const [state, setState] = useState<AppState>({
     currentPage: 'auth',
     isLogin: true,
@@ -10,6 +12,21 @@ export const useAppState = () => {
     password: '',
     userName: 'ANDRES'
   });
+
+  // Update page based on authentication state
+  useEffect(() => {
+    if (!loading) {
+      if (user && state.currentPage === 'auth') {
+        setState(prev => ({ 
+          ...prev, 
+          currentPage: 'dashboard',
+          userName: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
+        }));
+      } else if (!user && state.currentPage !== 'auth') {
+        setState(prev => ({ ...prev, currentPage: 'auth' }));
+      }
+    }
+  }, [user, loading, state.currentPage]);
 
   const updateState = (updates: Partial<AppState>) => {
     setState(prev => ({ ...prev, ...updates }));
@@ -52,6 +69,7 @@ export const useAppState = () => {
     handleLogin,
     handleLogout,
     switchAuthMode,
-    togglePassword
+    togglePassword,
+    loading
   };
 };

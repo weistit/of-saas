@@ -5,6 +5,7 @@ import { EmailManagementPage } from './pages/EmailManagementPage';
 import { ContentBusinessPage } from './pages/ContentBusinessPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { useAppState } from './hooks/useAppState';
+import { useAuth } from './hooks/useAuth';
 
 function App() {
   const {
@@ -14,8 +15,11 @@ function App() {
     handleLogin,
     handleLogout,
     switchAuthMode,
-    togglePassword
+    togglePassword,
+    loading
   } = useAppState();
+
+  const { signOut } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +38,29 @@ function App() {
   const handlePasswordChange = (password: string) => {
     updateState({ password });
   };
+
+  const handleActualLogout = async () => {
+    try {
+      await signOut();
+      handleLogout();
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Still navigate to auth page even if logout fails
+      handleLogout();
+    }
+  };
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#57A777] mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   switch (state.currentPage) {
     case 'auth':
@@ -55,7 +82,7 @@ function App() {
       return (
         <DashboardPage
           userName={state.userName}
-          onLogout={handleLogout}
+          onLogout={handleActualLogout}
           onNavigateToEmailManagement={() => navigateToPage('email-management')}
         />
       );
@@ -63,7 +90,7 @@ function App() {
     case 'email-management':
       return (
         <EmailManagementPage
-          onLogout={handleLogout}
+          onLogout={handleActualLogout}
           onNavigate={navigateToPage}
         />
       );
@@ -71,7 +98,7 @@ function App() {
     case 'content-business':
       return (
         <ContentBusinessPage
-          onLogout={handleLogout}
+          onLogout={handleActualLogout}
           onNavigate={navigateToPage}
         />
       );
@@ -79,7 +106,7 @@ function App() {
     case 'settings':
       return (
         <SettingsPage
-          onLogout={handleLogout}
+          onLogout={handleActualLogout}
           onNavigate={navigateToPage}
         />
       );
