@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Settings } from 'lucide-react';
 import { TopBar } from '../components/TopBar';
-import { LogoutModal } from '../components/LogoutModal';
+import { SettingsDropdown } from '../components/SettingsDropdown';
 
 interface DashboardPageProps {
   userName: string;
@@ -14,14 +14,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   onLogout,
   onNavigateToEmailManagement
 }) => {
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true);
+  const handleSettingsClick = () => {
+    setShowDropdown(!showDropdown);
   };
 
-  const handleLogoutConfirm = async () => {
+  const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       await onLogout();
@@ -29,12 +29,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       console.error('Logout error:', error);
     } finally {
       setIsLoggingOut(false);
-      setShowLogoutModal(false);
+      setShowDropdown(false);
     }
   };
 
-  const handleLogoutCancel = () => {
-    setShowLogoutModal(false);
+  const handleCloseDropdown = () => {
+    setShowDropdown(false);
   };
 
   return (
@@ -69,20 +69,26 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
       </div>
 
       <div className="fixed bottom-8 right-8">
-        <button 
-          onClick={handleLogoutClick}
-          className="bg-gray-200 hover:bg-gray-300 p-3 rounded-full shadow-lg transition-colors duration-200"
-        >
-          <Settings className="w-6 h-6 text-gray-600" />
-        </button>
+        <div className="relative">
+          <button 
+            onClick={handleSettingsClick}
+            className={`bg-gray-200 hover:bg-gray-300 p-3 rounded-full shadow-lg transition-colors duration-200 ${
+              showDropdown ? 'bg-gray-300' : ''
+            }`}
+          >
+            <Settings className="w-6 h-6 text-gray-600" />
+          </button>
+          
+          <div className="absolute bottom-full right-0 mb-2">
+            <SettingsDropdown
+              isOpen={showDropdown}
+              onClose={handleCloseDropdown}
+              onLogout={handleLogout}
+              isLoading={isLoggingOut}
+            />
+          </div>
+        </div>
       </div>
-
-      <LogoutModal
-        isOpen={showLogoutModal}
-        onClose={handleLogoutCancel}
-        onConfirm={handleLogoutConfirm}
-        isLoading={isLoggingOut}
-      />
     </div>
   );
 };

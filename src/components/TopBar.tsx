@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Settings } from 'lucide-react';
-import { LogoutModal } from './LogoutModal';
+import { SettingsDropdown } from './SettingsDropdown';
 
 interface TopBarProps {
   onLogout: () => void;
@@ -8,14 +8,14 @@ interface TopBarProps {
 }
 
 export const TopBar: React.FC<TopBarProps> = ({ onLogout, showUserActions = true }) => {
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogoutClick = () => {
-    setShowLogoutModal(true);
+  const handleSettingsClick = () => {
+    setShowDropdown(!showDropdown);
   };
 
-  const handleLogoutConfirm = async () => {
+  const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       await onLogout();
@@ -23,47 +23,49 @@ export const TopBar: React.FC<TopBarProps> = ({ onLogout, showUserActions = true
       console.error('Logout error:', error);
     } finally {
       setIsLoggingOut(false);
-      setShowLogoutModal(false);
+      setShowDropdown(false);
     }
   };
 
-  const handleLogoutCancel = () => {
-    setShowLogoutModal(false);
+  const handleCloseDropdown = () => {
+    setShowDropdown(false);
   };
 
   return (
-    <>
-      <div className="bg-white border-b border-gray-200 py-4">
-        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <div className="flex justify-center flex-1">
-            <img 
-              src="/logo.jpg" 
-              alt="Logo" 
-              className="h-12 w-auto"
-            />
-          </div>
-          {showUserActions && (
-            <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                <User className="w-6 h-6" />
-              </button>
+    <div className="bg-white border-b border-gray-200 py-4">
+      <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+        <div className="flex justify-center flex-1">
+          <img 
+            src="/logo.jpg" 
+            alt="Logo" 
+            className="h-12 w-auto"
+          />
+        </div>
+        {showUserActions && (
+          <div className="flex items-center space-x-4">
+            <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+              <User className="w-6 h-6" />
+            </button>
+            <div className="relative">
               <button 
-                onClick={handleLogoutClick}
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+                onClick={handleSettingsClick}
+                className={`p-2 text-gray-400 hover:text-gray-600 transition-colors ${
+                  showDropdown ? 'text-gray-600' : ''
+                }`}
               >
                 <Settings className="w-6 h-6" />
               </button>
+              
+              <SettingsDropdown
+                isOpen={showDropdown}
+                onClose={handleCloseDropdown}
+                onLogout={handleLogout}
+                isLoading={isLoggingOut}
+              />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-
-      <LogoutModal
-        isOpen={showLogoutModal}
-        onClose={handleLogoutCancel}
-        onConfirm={handleLogoutConfirm}
-        isLoading={isLoggingOut}
-      />
-    </>
+    </div>
   );
 };
