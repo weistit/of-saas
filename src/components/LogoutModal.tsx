@@ -24,11 +24,11 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
         onClick={onClose}
       />
       
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl max-w-sm w-full transform transition-all duration-300 scale-100">
+      {/* Modal positioned at bottom right */}
+      <div className="fixed bottom-20 right-8 z-50">
+        <div className="bg-white rounded-lg shadow-xl w-80 transform transition-all duration-300 scale-100 origin-bottom-right">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">
               Confirm Logout
             </h3>
@@ -42,8 +42,8 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
           </div>
           
           {/* Content */}
-          <div className="p-6">
-            <p className="text-gray-600 mb-6">
+          <div className="p-4">
+            <p className="text-gray-600 mb-4 text-sm">
               Are you sure you want to log out? You'll need to sign in again to access your account.
             </p>
             
@@ -52,14 +52,14 @@ export const LogoutModal: React.FC<LogoutModalProps> = ({
               <button
                 onClick={onClose}
                 disabled={isLoading}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 Cancel
               </button>
               <button
                 onClick={onConfirm}
                 disabled={isLoading}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
                 {isLoading ? 'Logging out...' : 'Log out'}
               </button>
