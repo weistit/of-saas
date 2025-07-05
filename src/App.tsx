@@ -43,9 +43,10 @@ function App() {
     try {
       await signOut();
     } catch (error) {
-      console.error('Logout error:', error);
+      // Error is already handled in signOut, just log if needed
+      console.log('Logout completed with warnings');
     } finally {
-      // Always navigate to auth page regardless of signOut success/failure
+      // Always navigate to auth page
       handleLogout();
     }
   };
