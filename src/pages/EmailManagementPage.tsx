@@ -21,8 +21,8 @@ export const EmailManagementPage: React.FC<EmailManagementPageProps> = ({
       <div className="flex">
         <Sidebar currentPage="email-management" onNavigate={onNavigate} />
 
-        <div className="flex-1 p-8">
-          <div className="max-w-2xl">
+        <div className="flex-1 p-8 flex items-center justify-center">
+          <div className="max-w-2xl w-full">
             <InfoBox className="mb-8">
               <strong>Conecta</strong> aquí tus cuentas de <strong>correo</strong> en las que quieras activar la generación automática de borradores (Gmail, Outlook u otro), y añade el <strong>número de teléfono</strong> (WhatsApp o Telegram) al que quieras recibir cada borrador para revisarlo y validarlo antes de su envío.
             </InfoBox>
