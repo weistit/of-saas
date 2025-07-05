@@ -140,10 +140,18 @@ export const useAuth = () => {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
+      // Set a timeout to prevent infinite waiting
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Logout timeout')), 5000)
+      })
+
+      const signOutPromise = supabase.auth.signOut()
+
+      await Promise.race([signOutPromise, timeoutPromise])
     } catch (error) {
       console.error('Error signing out:', error)
+      // Even if signOut fails, we should clear the local state
+      setUser(null)
       throw error
     }
   }

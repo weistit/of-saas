@@ -42,10 +42,10 @@ function App() {
   const handleActualLogout = async () => {
     try {
       await signOut();
-      handleLogout();
     } catch (error) {
       console.error('Logout error:', error);
-      // Still navigate to auth page even if logout fails
+    } finally {
+      // Always navigate to auth page regardless of signOut success/failure
       handleLogout();
     }
   };

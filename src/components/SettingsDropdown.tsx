@@ -40,6 +40,11 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
     ? 'bottom-full right-0 mb-2 origin-bottom-right' 
     : 'top-full right-0 mt-2 origin-top-right';
 
+  const handleLogoutClick = () => {
+    onClose();
+    onLogout();
+  };
+
   return (
     <div 
       ref={dropdownRef}
@@ -86,7 +91,7 @@ export const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
       {/* Logout Section */}
       <div className="border-t border-gray-100 py-1">
         <button
-          onClick={onLogout}
+          onClick={handleLogoutClick}
           disabled={isLoading}
           className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
