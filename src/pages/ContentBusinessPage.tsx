@@ -22,8 +22,8 @@ export const ContentBusinessPage: React.FC<ContentBusinessPageProps> = ({
       <div className="flex">
         <Sidebar currentPage="content-business" onNavigate={onNavigate} />
 
-        <div className="flex-1 p-8">
-          <div className="max-w-2xl">
+        <div className="flex-1 p-8 flex items-center justify-center">
+          <div className="max-w-2xl w-full">
             <InfoBox className="mb-8">
               Introduce los <strong>datos clave</strong> de tu negocio que el <strong>agente</strong> usará siempre al redactar correos: nombre, descripción breve, ubicación, horario, plazos, métodos de pago, políticas y contactos de soporte. Además, aquí podrás subir tu <strong>catálogo de productos</strong> y servicios para que el sistema aprenda tu estilo.
             </InfoBox>

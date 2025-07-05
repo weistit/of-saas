@@ -20,8 +20,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
       <div className="flex">
         <Sidebar currentPage="settings" onNavigate={onNavigate} />
 
-        <div className="flex-1 p-8">
-          <div className="max-w-2xl">
+        <div className="flex-1 p-8 flex items-center justify-center">
+          <div className="max-w-2xl w-full">
             <InfoBox className="mb-8">
               Al confirmar la <strong>baja se desactivará</strong> tu automatización de correos, se eliminarán tus datos asociados (contactos, credenciales y registros) y dejarás de recibir facturación.
             </InfoBox>
