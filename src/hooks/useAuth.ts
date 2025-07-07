@@ -159,6 +159,11 @@ export const useAuth = () => {
   }
 
   const getEmailAccounts = async () => {
+    // Check if user is available before making the query
+    if (!user?.id) {
+      return []
+    }
+
     try {
       const { data, error } = await supabase
         .from('email_accounts')
