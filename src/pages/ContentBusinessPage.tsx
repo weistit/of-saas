@@ -241,7 +241,6 @@ export const ContentBusinessPage: React.FC<ContentBusinessPageProps> = ({
                   </div>
                 )}
                 </div>
-              </div>
 
               <InfoBox>
                 Carga un fichero (CSV o PDF) con tu <strong>catálogo de productos</strong> o servicios (incluyendo nombres y precios) o bien añade directamente ejemplos de correos (preguntas y respuestas) que quieras que el sistema aprenda tu estilo.
