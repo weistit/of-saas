@@ -6,11 +6,13 @@ import { InfoBox } from '../components/InfoBox';
 import { FormInput } from '../components/FormInput';
 import { PageType } from '../types';
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.js?url';
 import Papa from 'papaparse';
 
 // Set up PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString();
 
 interface ContentBusinessPageProps {
   onLogout: () => void;
