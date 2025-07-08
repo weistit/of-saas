@@ -150,18 +150,28 @@ export const useAuth = () => {
       // Clear user state immediately for better UX
       setUser(null)
       
-      // Try to sign out from Supabase with a timeout
+      // Try to sign out from Supabase with a longer timeout
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Logout timeout')), 3000)
+        setTimeout(() => reject(new Error('Logout timeout')), 10000) // Increased to 10 seconds
       })
 
-      const signOutPromise = supabase.auth.signOut()
+      const signOutPromise = supabase.auth.signOut({ scope: 'local' }) // Force local logout
 
-      await Promise.race([signOutPromise, timeoutPromise])
+      try {
+        await Promise.race([signOutPromise, timeoutPromise])
+      } catch (timeoutError) {
+        // If timeout occurs, force local logout
+        console.warn('Supabase logout timed out, forcing local logout')
+        await supabase.auth.signOut({ scope: 'local' })
+      }
     } catch (error) {
-      // Don't throw the error, just log it
-      // The user state is already cleared above
-      console.warn('Logout warning (user still logged out locally):', error)
+      // Always ensure local logout even if remote logout fails
+      console.warn('Logout warning (forcing local logout):', error)
+      try {
+        await supabase.auth.signOut({ scope: 'local' })
+      } catch (localError) {
+        console.warn('Local logout also failed:', localError)
+      }
     }
   }
 
