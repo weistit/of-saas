@@ -102,7 +102,7 @@ export const useAuth = () => {
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}`,
-          scopes: 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify'
+          scopes: 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.send'
         }
       })
       if (error) throw error
