@@ -164,9 +164,11 @@ export const useAuth = () => {
         console.warn('Supabase logout timed out, forcing local logout')
         await supabase.auth.signOut({ scope: 'local' })
       }
-    } catch (error) {
-      // Always ensure local logout even if remote logout fails
-      console.warn('Logout warning (forcing local logout):', error)
+    } catch (error: any) {
+      // Suppress warning if timeout triggered this catch block
+      if (error?.message !== 'Logout timeout') {
+        console.warn('Logout warning (forcing local logout):', error)
+      }
       try {
         await supabase.auth.signOut({ scope: 'local' })
       } catch (localError) {
