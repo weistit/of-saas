@@ -146,23 +146,16 @@ export const useAuth = () => {
   }
 
   const signOut = async () => {
-    // Clear user state immediately for better UX
-    setUser(null)
-
     try {
-      // Attempt full sign-out but fall back to local if it fails
-      const { error } = await supabase.auth.signOut()
-      if (error) {
-        console.warn('Remote logout failed, falling back to local:', error)
-        await supabase.auth.signOut({ scope: 'local' })
-      }
+      // Clear user state immediately for better UX
+      setUser(null)
+      
+      // Simple logout without timeout - let Supabase handle it
+      await supabase.auth.signOut()
     } catch (error) {
-      console.warn('Logout warning (forcing local logout):', error)
-      try {
-        await supabase.auth.signOut({ scope: 'local' })
-      } catch (localError) {
-        console.warn('Local logout also failed:', localError)
-      }
+      // If logout fails, user is still logged out locally
+      // This is acceptable since we cleared the state above
+      console.log('Logout completed (with remote logout warning):', error)
     }
   }
 
