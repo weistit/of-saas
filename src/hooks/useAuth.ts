@@ -33,11 +33,11 @@ export const useAuth = () => {
     try {
       // Check if this is a Google OAuth sign-in
       const provider = session.user.app_metadata?.provider
-      
+
       if (provider === 'google') {
         // Extract email from user data
         const email = session.user.email
-        
+
         if (email && session.provider_token) {
           // Check if email account already exists
           const { data: existingAccount } = await supabase
@@ -57,8 +57,8 @@ export const useAuth = () => {
                 email: email,
                 access_token: session.provider_token,
                 refresh_token: session.provider_refresh_token,
-                token_expiry: session.expires_at 
-                  ? new Date(session.expires_at * 1000) 
+                token_expiry: session.expires_at
+                  ? new Date(session.expires_at * 1000)
                   : new Date(Date.now() + (3600 * 1000)) // Default 1 hour if not provided
               })
 
@@ -74,8 +74,8 @@ export const useAuth = () => {
               .update({
                 access_token: session.provider_token,
                 refresh_token: session.provider_refresh_token,
-                token_expiry: session.expires_at 
-                  ? new Date(session.expires_at * 1000) 
+                token_expiry: session.expires_at
+                  ? new Date(session.expires_at * 1000)
                   : new Date(Date.now() + (3600 * 1000)),
                 is_active: true,
                 updated_at: new Date()
@@ -103,16 +103,22 @@ export const useAuth = () => {
         options: {
           redirectTo: `${window.location.origin}`,
           scopes: [
-          'openid',
-          'email',
-          'profile',
-          'https://www.googleapis.com/auth/gmail.readonly',
-          'https://www.googleapis.com/auth/gmail.modify',
-          'https://www.googleapis.com/auth/gmail.send',
-        ].join(' ')
+            'openid',
+            'email',
+            'profile',
+            'https://www.googleapis.com/auth/gmail.readonly',
+            'https://www.googleapis.com/auth/gmail.modify',
+            'https://www.googleapis.com/auth/gmail.send',
+          ].join(' '),
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent'
+          }
         }
       })
+
       if (error) throw error
+      
     } catch (error) {
       console.error('Error signing in with Google:', error)
       throw error
@@ -147,18 +153,17 @@ export const useAuth = () => {
 
   const signOut = async () => {
     try {
-      // Clear user state immediately for better UX
+      // Timeout de 5 segundos para el logout remoto
+      await Promise.race([
+        supabase.auth.signOut(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Logout timeout')), 5000))])
       setUser(null)
-      
-      // Simple logout without timeout - let Supabase handle it
-      await supabase.auth.signOut()
     } catch (error) {
-      // If logout fails, user is still logged out locally
-      // This is acceptable since we cleared the state above
+      // Si falla el logout remoto, igual limpia el estado local
+      setUser(null)
       console.log('Logout completed (with remote logout warning):', error)
     }
   }
-
   const getEmailAccounts = async () => {
     // Check if user is available before making the query
     if (!user?.id) {
